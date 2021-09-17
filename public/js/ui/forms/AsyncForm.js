@@ -26,11 +26,11 @@ class AsyncForm {
    * вызывает метод submit()
    * */
   registerEvents() {
-    const form = document.querySelector("#new-account-form");
-    form.addEventListener('submit', (e) => {
-        e.preventDefault();
-        this.submit();
-      });
+    //const form = document.querySelector("#new-account-form");
+    document.addEventListener('submit', (e) => {
+      e.preventDefault();
+      this.submit();
+    });
   }
 
   /**
@@ -41,9 +41,8 @@ class AsyncForm {
    * }
    * */
   getData() {
-    const form = document.querySelector("#new-account-form");
     const obj = {};
-    const formData = new FormData(form);
+    const formData = new FormData(this.element);
     for(let [name, value] of formData) {
       obj[`${name}`] = value;
     }

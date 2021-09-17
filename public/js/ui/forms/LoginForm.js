@@ -11,7 +11,7 @@ class LoginForm extends AsyncForm {
    * */
   onSubmit(data) {
     User.login(data, (error, response) => {
-      if (response && response.success) {
+      if (response) {
         App.setState('user-logged');
         this.target.reset();
         App.modals['login'].close();

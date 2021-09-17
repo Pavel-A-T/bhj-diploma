@@ -27,22 +27,21 @@ class Modal {
      * которые вызывают метод onClose().
      * */
     registerEvents() {
-        //for (let item of element) {
-            this.element.addEventListener("click", this.onClose());
-       // }
-        //     if (item.getAttribute("data-dismiss") === "modal") {
-        //         item.addEventListener('click', this.onClose());
-        //     }
-        // }
+        const elements = this.element.querySelectorAll("[data-dismiss='modal']");
+        for (let item of elements) {
+              item.addEventListener('click', (event) => {
+                  this.onClose();
+                  event.preventDefault();
+              });
+        }
     }
 
     /**
      * Срабатывает после нажатия на элементы, закрывающие окно.
      * Закрывает текущее окно (Modal.close())
      * */
-    onClose(e) {
+    onClose() {
         this.close();
-        //e.preventDefault();
     }
 
     /**
@@ -50,13 +49,13 @@ class Modal {
      * со значением «block»
      * */
     open() {
-        this.element.style.dysplay = "block";
+        this.element.style.display = "block";
     }
 
     /**
      * Закрывает окно: удаляет CSS-свойство display
      * */
     close() {
-        this.element.style.removeProperty("dysplay");
+        this.element.style.removeProperty("display");
     }
 }

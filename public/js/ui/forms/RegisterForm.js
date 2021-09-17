@@ -12,6 +12,7 @@ class RegisterForm extends AsyncForm {
   onSubmit(data) {
     User.register(data, (err, response) => {
       if (response) {
+        console.log("response = " + response);
         //Сбросить поля формы
         this.target.reset();
         App.setState("user-logged");

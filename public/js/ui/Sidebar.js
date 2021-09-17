@@ -39,12 +39,12 @@ class Sidebar {
         const login = document.querySelector(".menu-item_login");
         const register = document.querySelector(".menu-item_register");
         const logout = document.querySelector(".menu-item_logout");
-        register.addEventListener('click', this.initAuth('register'));
-        login.addEventListener('click', this.initAuth('login'));
+        register.addEventListener('click', () => this.initAuth('register'));
+        login.addEventListener('click', () => this.initAuth('login'));
 
         logout.onclick = () => {
             const result = User.logout();
-            if (result.success === true) {
+            if (result.success) {
                 App.setState('init');
             }
         }

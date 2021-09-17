@@ -39,7 +39,7 @@ class User {
      * авторизованном пользователе.
      * */
     static fetch(callback) {
-        createRequest({
+        const response = createRequest({
             URL: this.URL + '/current',
             callback: (err, response) => {
                 if (response && response.user) {
@@ -53,6 +53,7 @@ class User {
             }
             //console.log(options);
         });
+        callback(response);
     }
 
     /**
@@ -71,7 +72,7 @@ class User {
                 if (response && response.user) {
                     this.setCurrent(response.user);
                 }
-                options.callback(err, response);
+                callback(err, response);
             }
         });
     }

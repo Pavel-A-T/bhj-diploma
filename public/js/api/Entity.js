@@ -12,7 +12,8 @@ class Entity {
      * */
     static list(data, callback) {
         data.method = "GET";
-        createRequest(data, callback);
+        data.callback = callback;
+        createRequest(data);
         //method = 'GET';
         //URL -?
     }
@@ -24,7 +25,8 @@ class Entity {
      * */
     static create(data, callback) {
         data.method = "PUT";
-        createRequest(data, callback);
+        data.callback = callback;
+        createRequest(data);
     }
 
     /**
@@ -33,6 +35,7 @@ class Entity {
      * */
     static remove(data, callback) {
         data.method = "DELETE";
+        data.callback = callback;
         createRequest(data, callback);
     }
 }

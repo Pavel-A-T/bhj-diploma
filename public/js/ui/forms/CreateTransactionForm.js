@@ -17,10 +17,10 @@ class CreateTransactionForm extends AsyncForm {
      * Обновляет в форме всплывающего окна выпадающий список
      * */
     renderAccountsList() {
-        Account.list(User.current(),(error, response) => {
+        const accountList = this.element.querySelector(".accounts-select");
+        Array.from(accountList).forEach(el => el.remove());
+        Account.list(User.current(), (error, response) => {
             if (response && response.success) {
-                let accountList = this.element.querySelector("#expense-accounts-list")
-                    ? this.element.querySelector("#expense-accounts-list") : this.element.querySelector("#income-accounts-list");
                 for (let item of response.data) {
                     const html = `<option value="${item.id}">${item.name}</option>`;
                     accountList.innerHTML += html;
@@ -29,20 +29,24 @@ class CreateTransactionForm extends AsyncForm {
         });
     }
 
-    /**
-     * Создаёт новую транзакцию (доход или расход)
-     * с помощью Transaction.create. По успешному результату
-     * вызывает App.update(), сбрасывает форму и закрывает окно,
-     * в котором находится форма
-     * */
-    onSubmit(data) {
-        Transaction.create(data, (error, response) => {
-            if (response && response.success === true) {
-                App.update();
-                this.element.reset();
-                App.modals['createAccount'].close();
+/**
+ * Создаёт новую транзакцию (доход или расход)
+ * с помощью Transaction.create. По успешному результату
+ * вызывает App.update(), сбрасывает форму и закрывает окно,
+ * в котором находится форма
+ * */
+onSubmit(data)
+{
+    Transaction.create(data, (error, response) => {
+        if (response && response.success === true) {
+            if (this.element.id === 'new-expense-form') {
+                App.getModal('newExpense').close();
+            } else {
+                App.getModal('newIncome').close();
             }
-            else throw new Error(response.error);
-        });
-    }
+            App.update();
+            this.element.reset();
+        } else throw error;
+    });
+}
 }

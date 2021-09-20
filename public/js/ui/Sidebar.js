@@ -22,7 +22,6 @@ class Sidebar {
         const body = document.querySelector(".skin-blue");
         btn.onclick = (e) => {
             e.preventDefault();
-            console.log(body);
             body.classList.toggle("sidebar-open");
             body.classList.toggle("sidebar-collapse");
         }
@@ -44,7 +43,9 @@ class Sidebar {
 
         logout.onclick = () => {
             User.logout((err, response) => {
-                if (response) App.setState('init');
+                if (err === null) {
+                    App.setState('init');
+                } else throw err;
             });
         }
     }

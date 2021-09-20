@@ -28,13 +28,9 @@ class Modal {
      * */
     registerEvents() {
         const elements = this.element.querySelectorAll("[data-dismiss='modal']");
-        for (let item of elements) {
-            item.addEventListener('click', (event) => {
-                this.onClose();
-                event.preventDefault();
-            });
-        }
+        elements.forEach(item => item.addEventListener('click', () => this.onClose()));
     }
+
 
     /**
      * Срабатывает после нажатия на элементы, закрывающие окно.

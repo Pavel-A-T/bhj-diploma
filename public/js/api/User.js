@@ -40,13 +40,15 @@ class User {
     static fetch(callback) {
         createRequest({
             url: this.URL + '/current',
+            method: 'GET',
+            responseType: 'json',
             callback: (err, response) => {
                 if (response && response.success) {
                     this.setCurrent(response.user);
                 } else {
                     this.unsetCurrent();
+                    callback(err, response);
                 }
-                callback(err, response);
             }
         });
     }
@@ -62,8 +64,7 @@ class User {
             url: this.URL + '/login',
             method: 'POST',
             responseType: 'json',
-            email: data.email,
-            password: data.password,
+            data,
             callback: (err, response) => {
                 if (response && response.user) {
                     this.setCurrent(response.user);
@@ -84,9 +85,7 @@ class User {
             url: this.URL + '/register',
             method: 'POST',
             responseType: 'json',
-            email: data.email,
-            password: data.password,
-            name: data.name,
+            data,
             callback: (err, response) => {
                 if (response && response.success) {
                     this.setCurrent(response.user);
@@ -108,8 +107,8 @@ class User {
             callback: (err, response) => {
                 if (response && response.success) {
                     this.unsetCurrent();
+                    callback(err, response);
                 }
-                callback(err, response);
             }
         });
     }

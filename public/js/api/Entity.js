@@ -12,12 +12,13 @@ class Entity {
      * */
     static list(data, callback) {
         createRequest({
-            url:this.URL,
+            url: this.URL,
             method: 'GET',
             responseType: 'json',
-            email: data?.user?.email,
-            password: data?.user?.password,
-            callback: callback
+            data,
+            callback: (err, response) => {
+                callback(err, response);
+            }
         });
     }
 
@@ -28,12 +29,13 @@ class Entity {
      * */
     static create(data, callback) {
         createRequest({
-            url:this.URL,
+            url: this.URL,
             method: 'PUT',
             responseType: 'json',
-            email: data.email,
-            password: data.password,
-            callback: callback
+            data,
+            callback: (err, response) => {
+                callback(err, response);
+            }
         });
     }
 
@@ -43,12 +45,12 @@ class Entity {
      * */
     static remove(data, callback) {
         createRequest({
-            url:this.URL,
+            url: this.URL + data,
             method: 'DELETE',
             responseType: 'json',
-            email: data.email,
-            password: data.password,
-            callback: callback
+            callback: (err, response) => {
+                callback(err, response);
+            }
         });
     }
 }

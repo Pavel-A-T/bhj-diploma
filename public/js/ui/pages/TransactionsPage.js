@@ -62,11 +62,12 @@ class TransactionsPage {
         }
         let question = confirm("Вы действительно хотите удалить счёт?");
         if (question) {
-            Account.remove(this.lastOptions, (error, response) => {
+            const url = '?id=' + this.lastOptions.account_id;
+            Account.remove(url, (error, response) => {
                 if (response) {
                     TransactionsPage.clear();
                     App.updateWidgets();
-                } else return error;
+                } else throw error;
             });
         }
     }
@@ -80,7 +81,8 @@ class TransactionsPage {
     removeTransaction(id) {
         let question = confirm("Вы действительно хотите удалить транзакцию?");
         if (!question) return;
-        Transaction.remove(id, (error, response) => {
+        const url = '?id=' + id;
+        Transaction.remove(url, (error, response) => {
             if (response) {
                 App.update();
             } else return error;
@@ -205,27 +207,30 @@ class TransactionsPage {
             element.classList.add('transaction_income');
         }
         element.classList.add('row');
-        element.innerHTML = `<div class="col-md-7 transaction__details">
+        element.innerHTML =
+            `<div class="transaction transaction_` + item.type + ` row">
+        <div class="col-md-7 transaction__details">
       <div class="transaction__icon">
           <span class="fa fa-money fa-2x"></span>
       </div>
       <div class="transaction__info">
-          <h4 class="transaction__title">${item.name}</h4>
+          <h4 class="transaction__title">` + item.name + `</h4>
           <!-- дата -->
-          <div class="transaction__date">${date}</div>
+          <div class="transaction__date">`+ date + `</div>
       </div>
     </div>
     <div class="col-md-3">
       <div class="transaction__summ">
       <!--  сумма -->
-          ${item.sum} <span class="currency">₽</span>
+          ` +item.sum + ` <span class="currency">₽</span>
       </div>
     </div>
     <div class="col-md-2 transaction__controls">
         <!-- в data-id нужно поместить id -->
-        <button class="btn btn-danger transaction__remove" data-id=${item['account_id']}>
+        <button class="btn btn-danger transaction__remove" data-id=` + item.id + `>
             <i class="fa fa-trash"></i>  
         </button>
+    </div>
     </div>`;
 
         return element.outerHTML;

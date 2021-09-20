@@ -5,12 +5,14 @@
  * */
 class User {
     static URL = "/user";
+    id = '';
 
     /**
      * Устанавливает текущего пользователя в
      * локальном хранилище.
      * */
     static setCurrent(user) {
+        this.id = user.id;
         localStorage.setItem(String(user.id), JSON.stringify(user));
     }
 
@@ -19,7 +21,7 @@ class User {
      * пользователе из локального хранилища.
      * */
     static unsetCurrent() {
-        localStorage.removeItem(String(this));
+        localStorage.removeItem(this.id);
     }
 
     /**
@@ -27,33 +29,26 @@ class User {
      * из локального хранилища
      * */
     static current() {
-        let objUser = localStorage.getItem(String(this));
-        if (objUser) {
-            return JSON.parse(objUser);
-        }
-        return undefined;
+        return JSON.parse(localStorage.getItem(this.id));
     }
+
 
     /**
      * Получает информацию о текущем
      * авторизованном пользователе.
      * */
     static fetch(callback) {
-        const response = createRequest({
-            URL: this.URL + '/current',
+        createRequest({
+            url: this.URL + '/current',
             callback: (err, response) => {
-                if (response && response.user) {
+                if (response && response.success) {
                     this.setCurrent(response.user);
-                    console.log(response);
                 } else {
-                    console.log(err);
                     this.unsetCurrent();
                 }
-                //callback(err, response);
+                callback(err, response);
             }
-            //console.log(options);
         });
-        callback(response);
     }
 
     /**
@@ -67,7 +62,8 @@ class User {
             url: this.URL + '/login',
             method: 'POST',
             responseType: 'json',
-            data,
+            email: data.email,
+            password: data.password,
             callback: (err, response) => {
                 if (response && response.user) {
                     this.setCurrent(response.user);
@@ -88,9 +84,11 @@ class User {
             url: this.URL + '/register',
             method: 'POST',
             responseType: 'json',
-            data,
-            callback:  (err, response) => {
-                if (response && response.user) {
+            email: data.email,
+            password: data.password,
+            name: data.name,
+            callback: (err, response) => {
+                if (response && response.success) {
                     this.setCurrent(response.user);
                 }
                 callback(err, response);
@@ -108,7 +106,7 @@ class User {
             method: 'POST',
             responseType: 'json',
             callback: (err, response) => {
-                if (response && response.user) {
+                if (response && response.success) {
                     this.unsetCurrent();
                 }
                 callback(err, response);

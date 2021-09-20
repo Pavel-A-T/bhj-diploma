@@ -6,57 +6,56 @@
  * для последующей обработки
  * */
 class AsyncForm {
-  /**
-   * Если переданный элемент не существует,
-   * необходимо выкинуть ошибку.
-   * Сохраняет переданный элемент и регистрирует события
-   * через registerEvents()
-   * */
-  constructor(element) {
-    if (element) {
-      this.element = element;
-      this.registerEvents();
-    } else {
-      throw new Error(`${element} is null!`);
+    /**
+     * Если переданный элемент не существует,
+     * необходимо выкинуть ошибку.
+     * Сохраняет переданный элемент и регистрирует события
+     * через registerEvents()
+     * */
+    constructor(element) {
+        if (!element) {
+            throw new Error(`${element} is null!`);
+        }
+        this.element = element;
+        this.registerEvents();
     }
-  }
 
-  /**
-   * Необходимо запретить отправку формы и в момент отправки
-   * вызывает метод submit()
-   * */
-  registerEvents() {
-    //const form = document.querySelector("#new-account-form");
-    document.addEventListener('submit', (e) => {
-      e.preventDefault();
-      this.submit();
-    });
-  }
 
-  /**
-   * Преобразует данные формы в объект вида
-   * {
-   *  'название поля формы 1': 'значение поля формы 1',
-   *  'название поля формы 2': 'значение поля формы 2'
-   * }
-   * */
-  getData() {
-    const obj = {};
-    const formData = new FormData(this.element);
-    for(let [name, value] of formData) {
-      obj[`${name}`] = value;
+    /**
+     * Необходимо запретить отправку формы и в момент отправки
+     * вызывает метод submit()
+     * */
+    registerEvents() {
+        this.element.addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.element.submit();
+        });
     }
-    return obj;
-  }
 
-  onSubmit(options){
-  }
+    /**
+     * Преобразует данные формы в объект вида
+     * {
+     *  'название поля формы 1': 'значение поля формы 1',
+     *  'название поля формы 2': 'значение поля формы 2'
+     * }
+     * */
+    getData() {
+        const obj = {};
+        const formData = new FormData(this.element);
+        for (let [name, value] of formData) {
+            obj[`${name}`] = value;
+        }
+        return obj;
+    }
 
-  /**
-   * Вызывает метод onSubmit и передаёт туда
-   * данные, полученные из метода getData()
-   * */
-  submit() {
-    this.onSubmit(this.getData());
-  }
+    onSubmit(options) {
+    }
+
+    /**
+     * Вызывает метод onSubmit и передаёт туда
+     * данные, полученные из метода getData()
+     * */
+    submit() {
+        this.onSubmit(this.getData());
+    }
 }

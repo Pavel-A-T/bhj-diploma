@@ -12,11 +12,11 @@ class TransactionsWidget {
      * необходимо выкинуть ошибку.
      * */
     constructor(element) {
-        if (element) {
-            this.element = element;
-        } else {
+        if (!element) {
             throw new Error('element is null!');
         }
+        this.element = element;
+        this.registerEvents();
     }
 
     /**
@@ -26,18 +26,14 @@ class TransactionsWidget {
      * экземпляра окна
      * */
     registerEvents() {
-        const up = document.querySelector(".create-income-button");
-        const down = document.querySelector(".create-expense-button");
-
-        up.onclick = (event) => {
+        this.element.onclick = (event) => {
             event.preventDefault();
-            App.getModal('newIncome');
+            if (event.target === this.element.querySelector(".create-income-button")) {
+                App.getModal('newIncome').open();
+            }
+            else if (event.target === this.element.querySelector(".create-expense-button")) {
+                App.getModal('newExpense').open();
+            }
         }
-
-        down.onclick = (event) => {
-            event.preventDefault();
-            App.getModal('newExpense');
-        }
-
     }
 }

@@ -5,6 +5,7 @@
  * */
 class TransactionsPage {
     lastOptions = [];
+
     /**
      * Если переданный элемент не существует,
      * необходимо выкинуть ошибку.
@@ -12,12 +13,11 @@ class TransactionsPage {
      * через registerEvents()
      * */
     constructor(element) {
-        if (element) {
-            this.element = element;
-            this.registerEvents();
-        } else {
+        if (!element) {
             throw new Error(`${element} is null!`);
         }
+        this.element = element;
+        this.registerEvents();
     }
 
     /**
@@ -37,14 +37,11 @@ class TransactionsPage {
         const account = this.element.querySelector(".remove-account");
         const transaction = this.element.querySelector(".transaction__remove");
 
-        if (transaction) {
-            transaction.onclick = () => {
+        this.element.onclick = (event) => {
+            if (event.target === transaction) {
                 const id = transaction.getAttribute("data-id");
                 this.removeTransaction(id);
-            }
-        }
-        if (account) {
-            account.onclick = () => {
+            } else if (event.target === account) {
                 this.removeAccount();
             }
         }
@@ -69,8 +66,7 @@ class TransactionsPage {
                 if (response) {
                     TransactionsPage.clear();
                     App.updateWidgets();
-                }
-                else return error;
+                } else return error;
             });
         }
     }
@@ -87,8 +83,7 @@ class TransactionsPage {
         Transaction.remove(id, (error, response) => {
             if (response) {
                 App.update();
-            }
-            else return error;
+            } else return error;
         });
     }
 
@@ -106,14 +101,12 @@ class TransactionsPage {
         Account.get(options["account_id"], (error, response) => {
             if (response) {
                 this.renderTitle(response.name);
-            }
-            else return error;
+            } else return error;
         });
-        Transaction.list(data, (error, response) => {
+        Transaction.list(options, (error, response) => {
             if (response) {
                 this.renderTransactions(response);
-            }
-            else return error;
+            } else return error;
         });
     }
 
@@ -131,8 +124,8 @@ class TransactionsPage {
      * Устанавливает заголовок в элемент .content-title
      * */
     renderTitle(name) {
-       const title = this.element.querySelector(".content-title");
-       title.textContent = name;
+        const title = this.element.querySelector(".content-title");
+        if (title) title.textContent = name;
     }
 
     /**
@@ -140,7 +133,61 @@ class TransactionsPage {
      * в формат «10 марта 2019 г. в 03:20»
      * */
     formatDate(date) {
-
+        const month = date.slice(5, 7);
+        let strMonth;
+        switch (month) {
+            case "01": {
+                strMonth = "января";
+                break;
+            }
+            case "02": {
+                strMonth = "февраля";
+                break;
+            }
+            case "03": {
+                strMonth = "марта";
+                break;
+            }
+            case "04": {
+                strMonth = "апреля";
+                break;
+            }
+            case "05": {
+                strMonth = "мая";
+                break;
+            }
+            case "06": {
+                strMonth = "июня";
+                break;
+            }
+            case "07": {
+                strMonth = "июля";
+                break;
+            }
+            case "08": {
+                strMonth = "августа";
+                break;
+            }
+            case "09": {
+                strMonth = "сентября";
+                break;
+            }
+            case "10": {
+                strMonth = "октября";
+                break;
+            }
+            case "11": {
+                strMonth = "ноября";
+                break;
+            }
+            case "12": {
+                strMonth = "декабря";
+                break;
+            }
+            default:
+                "месяц не найден!";
+        }
+        return date.slice(8, 10) + " " + strMonth + " " + date.slice(0, 4) + " " + "г." + " " + "в" + " " + date.slice(11, 16);
     }
 
     /**
@@ -148,7 +195,40 @@ class TransactionsPage {
      * item - объект с информацией о транзакции
      * */
     getTransactionHTML(item) {
+        const date = this.formatDate(item['created_at']);
+        let element = document.createElement('div');
+        element.classList.add('transaction');
 
+        if (item.type === 'expense') {
+            element.classList.add('transaction_expense');
+        } else {
+            element.classList.add('transaction_income');
+        }
+        element.classList.add('row');
+        element.innerHTML = `<div class="col-md-7 transaction__details">
+      <div class="transaction__icon">
+          <span class="fa fa-money fa-2x"></span>
+      </div>
+      <div class="transaction__info">
+          <h4 class="transaction__title">${item.name}</h4>
+          <!-- дата -->
+          <div class="transaction__date">${date}</div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="transaction__summ">
+      <!--  сумма -->
+          ${item.sum} <span class="currency">₽</span>
+      </div>
+    </div>
+    <div class="col-md-2 transaction__controls">
+        <!-- в data-id нужно поместить id -->
+        <button class="btn btn-danger transaction__remove" data-id=${item['account_id']}>
+            <i class="fa fa-trash"></i>  
+        </button>
+    </div>`;
+
+        return element.outerHTML;
     }
 
     /**
@@ -156,6 +236,9 @@ class TransactionsPage {
      * используя getTransactionHTML
      * */
     renderTransactions(data) {
-            return;
+        const content = document.querySelector(".content");
+        for (let item of Array.from(data)) {
+            content.innerHTML += this.getTransactionHTML(item);
+        }
     }
 }

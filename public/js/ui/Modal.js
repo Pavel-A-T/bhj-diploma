@@ -12,13 +12,13 @@ class Modal {
      * необходимо выкинуть ошибку.
      * */
     constructor(element) {
-        if (element) {
-            this.element = element;
-            this.registerEvents();
-        } else {
+        if (!element) {
             throw new Error(`${element} is null!`);
         }
+        this.element = element;
+        this.registerEvents();
     }
+
 
     /**
      * Находит внутри контейнера (свойство element) все элементы,
@@ -29,10 +29,10 @@ class Modal {
     registerEvents() {
         const elements = this.element.querySelectorAll("[data-dismiss='modal']");
         for (let item of elements) {
-              item.addEventListener('click', (event) => {
-                  this.onClose();
-                  event.preventDefault();
-              });
+            item.addEventListener('click', (event) => {
+                this.onClose();
+                event.preventDefault();
+            });
         }
     }
 

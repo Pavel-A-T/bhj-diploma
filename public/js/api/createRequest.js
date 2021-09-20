@@ -3,37 +3,30 @@
  * на сервер.
  * */
 const createRequest = (options = {}) => {
+    let formData = new FormData();
     const xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
-
-    if (options.method === 'GET') {
-        try {
-            xhr.open(options.method, `${options.url}?mail=${options.mail}&password=${options.password}`);
-            xhr.send();
-            if (xhr.readyState === 4 && xhr.status === 200) {
-                options.callback(null, xhr.responseText);
-            } else {
-                options.callback(new Error("Произошла ошибка соединения!"), null);
-            }
-        } catch (e) {
-            options.callback(new Error(e.message), null);
-        }
-    } else {
-        formData = new FormData;
-        formData.append('mail', options.mail);
+    if (options.email && options.password) {
+        options.url += `?mail=${options.email}&password=${options.password}`;
+        formData.append('email', options.email);
         formData.append('password', options.password);
-        try {
-            if (!options.method) options.method = 'POST';
-            xhr.open(options.method, options.url);
-            xhr.send(formData);
-
-            if (xhr.readyState === 4 && xhr.status === 200) {
-                options.callback(null, xhr.responseText);
-            } else {
-                options.callback(new Error("Произошла ошибка соединения!"), null);
-            }
-        } catch (e) {
-            callback(new Error(e.message), null);
+        formData.append('name', options.name);
+    }
+    if (!options.method) options.method = 'POST';
+    try {
+        xhr.open(options.method, options.url);
+        if (options.method === 'GET') {
+            xhr.send();
+        }
+        else xhr.send(formData);
+    } catch (e) {
+        options.callback(new Error(e.message), null);
+    }
+    xhr.onload = () => {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            options.callback(null, xhr.response);
+        } else {
+            options.callback(new Error("Произошла ошибка соединения!"), null);
         }
     }
 }

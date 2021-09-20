@@ -11,11 +11,14 @@ class Entity {
      * (в зависимости от того, что наследуется от Entity)
      * */
     static list(data, callback) {
-        data.method = "GET";
-        data.callback = callback;
-        createRequest(data);
-        //method = 'GET';
-        //URL -?
+        createRequest({
+            url:this.URL,
+            method: 'GET',
+            responseType: 'json',
+            email: data?.user?.email,
+            password: data?.user?.password,
+            callback: callback
+        });
     }
 
     /**
@@ -24,9 +27,14 @@ class Entity {
      * что наследуется от Entity)
      * */
     static create(data, callback) {
-        data.method = "PUT";
-        data.callback = callback;
-        createRequest(data);
+        createRequest({
+            url:this.URL,
+            method: 'PUT',
+            responseType: 'json',
+            email: data.email,
+            password: data.password,
+            callback: callback
+        });
     }
 
     /**
@@ -34,8 +42,13 @@ class Entity {
      * (в зависимости от того, что наследуется от Entity)
      * */
     static remove(data, callback) {
-        data.method = "DELETE";
-        data.callback = callback;
-        createRequest(data, callback);
+        createRequest({
+            url:this.URL,
+            method: 'DELETE',
+            responseType: 'json',
+            email: data.email,
+            password: data.password,
+            callback: callback
+        });
     }
 }

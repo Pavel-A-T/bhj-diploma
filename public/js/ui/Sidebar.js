@@ -43,10 +43,9 @@ class Sidebar {
         login.addEventListener('click', () => this.initAuth('login'));
 
         logout.onclick = () => {
-            const result = User.logout();
-            if (result.success) {
-                App.setState('init');
-            }
+            User.logout((err, response) => {
+                if (response) App.setState('init');
+            });
         }
     }
 

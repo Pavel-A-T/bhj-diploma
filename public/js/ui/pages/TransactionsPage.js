@@ -14,7 +14,7 @@ class TransactionsPage {
      * */
     constructor(element) {
         if (!element) {
-            throw new Error(`${element} is null!`);
+            throw new Error('element is null!');
         }
         this.element = element;
         this.registerEvents();
@@ -118,8 +118,8 @@ class TransactionsPage {
      * Устанавливает заголовок: «Название счёта»
      * */
     clear() {
-        this.element.innerHTML = "";
         this.renderTransactions([]);
+        this.renderTitle('Название счёта');
     }
 
     /**
@@ -198,17 +198,17 @@ class TransactionsPage {
      * */
     getTransactionHTML(item) {
         const date = this.formatDate(item['created_at']);
-        let element = document.createElement('div');
-        element.classList.add('transaction');
-
-        if (item.type === 'expense') {
-            element.classList.add('transaction_expense');
-        } else {
-            element.classList.add('transaction_income');
-        }
-        element.classList.add('row');
-        element.innerHTML =
-            `<div class="transaction transaction_` + item.type + ` row">
+        // let element = document.createElement('div');
+        // element.classList.add('transaction');
+        //
+        // if (item.type === 'expense') {
+        //     element.classList.add('transaction_expense');
+        // } else {
+        //     element.classList.add('transaction_income');
+        // }
+        // element.classList.add('row');
+        // element.innerHTML =
+        return `<div class="transaction transaction_` + item.type + ` row">
         <div class="col-md-7 transaction__details">
       <div class="transaction__icon">
           <span class="fa fa-money fa-2x"></span>
@@ -216,13 +216,13 @@ class TransactionsPage {
       <div class="transaction__info">
           <h4 class="transaction__title">` + item.name + `</h4>
           <!-- дата -->
-          <div class="transaction__date">`+ date + `</div>
+          <div class="transaction__date">` + date + `</div>
       </div>
     </div>
     <div class="col-md-3">
       <div class="transaction__summ">
       <!--  сумма -->
-          ` +item.sum + ` <span class="currency">₽</span>
+          ` + item.sum + ` <span class="currency">₽</span>
       </div>
     </div>
     <div class="col-md-2 transaction__controls">
@@ -232,8 +232,6 @@ class TransactionsPage {
         </button>
     </div>
     </div>`;
-
-        return element.outerHTML;
     }
 
     /**
@@ -242,8 +240,19 @@ class TransactionsPage {
      * */
     renderTransactions(data) {
         const content = document.querySelector(".content");
-        for (let item of Array.from(data)) {
-            content.innerHTML += this.getTransactionHTML(item);
+        if (data && data.length === 0) {
+            content.innerHTML = "";
+        } else if (data) {
+            content.innerHTML = "";
+            Array.from(data).forEach(el => {
+                const code = this.getTransactionHTML(el);
+                content.insertAdjacentHTML("beforeend", code);
+            });
         }
+        const removeTransaction = this.element.querySelectorAll('.transaction__remove');
+        removeTransaction.forEach(elem => elem.onclick = () => {
+            const data_id = elem.getAttribute('data-id');
+            this.removeTransaction(data_id);
+        });
     }
 }

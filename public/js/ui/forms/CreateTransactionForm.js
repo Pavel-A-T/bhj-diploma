@@ -38,7 +38,7 @@ class CreateTransactionForm extends AsyncForm {
 onSubmit(data)
 {
     Transaction.create(data, (error, response) => {
-        if (response && response.success === true) {
+        if (response && response.success) {
             if (this.element.id === 'new-expense-form') {
                 App.getModal('newExpense').close();
             } else {
@@ -46,7 +46,7 @@ onSubmit(data)
             }
             App.update();
             this.element.reset();
-        } else throw error;
+        } else console.log(error);
     });
 }
 }

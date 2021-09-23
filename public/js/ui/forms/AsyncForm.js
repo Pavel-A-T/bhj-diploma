@@ -14,7 +14,7 @@ class AsyncForm {
      * */
     constructor(element) {
         if (!element) {
-            throw new Error(`${element} is null!`);
+            throw new Error('element is null!');
         }
         this.element = element;
         this.registerEvents();

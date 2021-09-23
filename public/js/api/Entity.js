@@ -3,7 +3,7 @@
  * Имеет свойство URL, равно пустой строке.
  * */
 class Entity {
-    URL = "";
+    static URL = "";
 
     /**
      * Запрашивает с сервера список данных.
@@ -16,9 +16,7 @@ class Entity {
             method: 'GET',
             responseType: 'json',
             data,
-            callback: (err, response) => {
-                callback(err, response);
-            }
+            callback : callback
         });
     }
 
@@ -33,9 +31,7 @@ class Entity {
             method: 'PUT',
             responseType: 'json',
             data,
-            callback: (err, response) => {
-                callback(err, response);
-            }
+            callback: callback
         });
     }
 
@@ -45,12 +41,11 @@ class Entity {
      * */
     static remove(data, callback) {
         createRequest({
-            url: this.URL + data,
+            url: this.URL,
+            data,
             method: 'DELETE',
             responseType: 'json',
-            callback: (err, response) => {
-                callback(err, response);
-            }
+            callback: callback
         });
     }
 }

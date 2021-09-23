@@ -45,7 +45,7 @@ class Sidebar {
             User.logout((err, response) => {
                 if (err === null) {
                     App.setState('init');
-                } else throw err;
+                } else alert(err);
             });
         }
     }

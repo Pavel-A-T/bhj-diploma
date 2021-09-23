@@ -47,8 +47,8 @@ class User {
                     this.setCurrent(response.user);
                 } else {
                     this.unsetCurrent();
-                    callback(err, response);
                 }
+                callback(err, response);
             }
         });
     }
@@ -107,8 +107,8 @@ class User {
             callback: (err, response) => {
                 if (response && response.success) {
                     this.unsetCurrent();
-                    callback(err, response);
                 }
+                callback(err, response);
             }
         });
     }

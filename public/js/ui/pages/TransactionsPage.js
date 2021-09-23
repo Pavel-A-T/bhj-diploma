@@ -4,7 +4,7 @@
  * расходов конкретного счёта
  * */
 class TransactionsPage {
-    lastOptions = [];
+   lastOptions = [];
 
     /**
      * Если переданный элемент не существует,
@@ -35,16 +35,9 @@ class TransactionsPage {
      * */
     registerEvents() {
         const account = this.element.querySelector(".remove-account");
-        const transaction = this.element.querySelector(".transaction__remove");
-
-        this.element.onclick = (event) => {
-            if (event.target === transaction) {
-                const id = transaction.getAttribute("data-id");
-                this.removeTransaction(id);
-            } else if (event.target === account) {
-                this.removeAccount();
-            }
-        }
+        account.onclick = () => {
+            this.removeAccount()
+        };
     }
 
     /**
@@ -57,18 +50,18 @@ class TransactionsPage {
      * для обновления приложения
      * */
     removeAccount() {
-        if (this.lastOptions.length === 0) {
-            return;
-        }
-        let question = confirm("Вы действительно хотите удалить счёт?");
-        if (question) {
-            const url = '?id=' + this.lastOptions.account_id;
-            Account.remove(url, (error, response) => {
-                if (response) {
-                    TransactionsPage.clear();
-                    App.updateWidgets();
-                } else throw error;
-            });
+        if (this.lastOptions) {
+            console.log(this.lastOptions)
+            let question = confirm("Вы действительно хотите удалить счёт?");
+            if (question) {
+                const data = {id: this.lastOptions.account_id};
+                Account.remove(data, (error, response) => {
+                    if (response) {
+                        App.updateWidgets();
+                    } else alert(error);
+                });
+                this.clear();
+            }
         }
     }
 
@@ -81,11 +74,11 @@ class TransactionsPage {
     removeTransaction(id) {
         let question = confirm("Вы действительно хотите удалить транзакцию?");
         if (!question) return;
-        const url = '?id=' + id;
-        Transaction.remove(url, (error, response) => {
+        const data = {id};
+        Transaction.remove(data, (error, response) => {
             if (response) {
                 App.update();
-            } else return error;
+            } else console.error(error);
         });
     }
 
@@ -100,15 +93,16 @@ class TransactionsPage {
             return;
         }
         this.lastOptions = options;
-        Account.get(options["account_id"], (error, response) => {
-            if (response) {
-                this.renderTitle(response.name);
-            } else return error;
+        Account.get(options.account_id, (error, response) => {
+            if (response && response.data) {
+                this.renderTitle(response.data.name);
+            }
         });
-        Transaction.list(options, (error, response) => {
+        const data = {addUrl: '?account_id=' + options.account_id};
+        Transaction.list(data, (error, response) => {
             if (response) {
-                this.renderTransactions(response);
-            } else return error;
+                this.renderTransactions(response.data);
+            } else console.error(error);
         });
     }
 
@@ -135,79 +129,18 @@ class TransactionsPage {
      * в формат «10 марта 2019 г. в 03:20»
      * */
     formatDate(date) {
-        const month = date.slice(5, 7);
-        let strMonth;
-        switch (month) {
-            case "01": {
-                strMonth = "января";
-                break;
-            }
-            case "02": {
-                strMonth = "февраля";
-                break;
-            }
-            case "03": {
-                strMonth = "марта";
-                break;
-            }
-            case "04": {
-                strMonth = "апреля";
-                break;
-            }
-            case "05": {
-                strMonth = "мая";
-                break;
-            }
-            case "06": {
-                strMonth = "июня";
-                break;
-            }
-            case "07": {
-                strMonth = "июля";
-                break;
-            }
-            case "08": {
-                strMonth = "августа";
-                break;
-            }
-            case "09": {
-                strMonth = "сентября";
-                break;
-            }
-            case "10": {
-                strMonth = "октября";
-                break;
-            }
-            case "11": {
-                strMonth = "ноября";
-                break;
-            }
-            case "12": {
-                strMonth = "декабря";
-                break;
-            }
-            default:
-                "месяц не найден!";
-        }
-        return date.slice(8, 10) + " " + strMonth + " " + date.slice(0, 4) + " " + "г." + " " + "в" + " " + date.slice(11, 16);
+        const time = date.slice(11, 16);
+        const localDate = new Date(date).toLocaleDateString('ru');
+        return localDate + ' г. в ' + time;
     }
+
 
     /**
      * Формирует HTML-код транзакции (дохода или расхода).
      * item - объект с информацией о транзакции
      * */
     getTransactionHTML(item) {
-        const date = this.formatDate(item['created_at']);
-        // let element = document.createElement('div');
-        // element.classList.add('transaction');
-        //
-        // if (item.type === 'expense') {
-        //     element.classList.add('transaction_expense');
-        // } else {
-        //     element.classList.add('transaction_income');
-        // }
-        // element.classList.add('row');
-        // element.innerHTML =
+        const date = this.formatDate(item.created_at);
         return `<div class="transaction transaction_` + item.type + ` row">
         <div class="col-md-7 transaction__details">
       <div class="transaction__icon">
@@ -242,9 +175,9 @@ class TransactionsPage {
         const content = document.querySelector(".content");
         if (data && data.length === 0) {
             content.innerHTML = "";
-        } else if (data) {
+        } else {
             content.innerHTML = "";
-            Array.from(data).forEach(el => {
+            data.forEach(el => {
                 const code = this.getTransactionHTML(el);
                 content.insertAdjacentHTML("beforeend", code);
             });

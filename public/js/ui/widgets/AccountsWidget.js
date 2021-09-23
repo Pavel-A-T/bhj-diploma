@@ -30,16 +30,27 @@ class AccountsWidget {
      * вызывает AccountsWidget.onSelectAccount()
      * */
     registerEvents() {
-        this.element.onclick = (event) => {
-            event.preventDefault();
-            if (event.target === this.element.querySelector(".create-account")) {
-                App.getModal('createAccount').open();
-            }
+        const createAccount = this.element.querySelector('.create-account');
+        createAccount.onclick = () => {
+            App.getModal('createAccount').open();
         }
-        const collection = document.querySelectorAll(".account");
-        collection.forEach(item => {
-            item.addEventListener('click', this.onSelectAccount(item))
+        const accounts = document.querySelectorAll('.account');
+
+        accounts.forEach(elem => {
+            elem.addEventListener('click', event => {
+                this.onSelectAccount(elem);
+            });
         });
+        // this.element.onclick = (event) => {
+        //     event.preventDefault();
+        //     if (event.target === this.element.querySelector(".create-account")) {
+        //         App.getModal('createAccount').open();
+        //     }
+        // }
+        // const collection = document.querySelectorAll(".account");
+        // collection.forEach(item => {
+        //     item.addEventListener('click', this.onSelectAccount(item))
+        // });
     }
 
 
@@ -87,11 +98,11 @@ class AccountsWidget {
         const activeElements = this.element.querySelectorAll('.active');
         activeElements.forEach(item => {
             if (item !== element) {
-                item.classList.remove('active')
+                item.classList.remove('active');
             }
         })
-        const account_id = element.getAttribute('data-id')
-        App.showPage('transactions', {'account_id': account_id})
+        const account_id = element.getAttribute('data-id');
+        App.showPage('transactions', {'account_id': account_id});
 
     }
 
